@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "33070:3308"
+    environment:
+      MYSQL_DATABASE: 'backend_core'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD: ""
+    volumes:
+      - ./db:/var/lib/mysql
+  pma:
+        image: phpmyadmin:5.1
+        environment:
+            - PMA_ARBITRARY=1
+            - PMA_HOST=${DB_HOST}
+            - PMA_USER=${DB_USERNAME}
+            - PMA_PASSWORD=${DB_PASSWORD}
+            - PMA_PORT=${DB_PORT}
+        ports:
+            - "8883:80"
+  app:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    image: 'laravelapp'
+    ports:
+      - "8083:80"
+    volumes:
+      - ./:/var/www/html
